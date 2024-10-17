@@ -40,5 +40,37 @@ public class DOTGraphTest {
         Assert.assertNull(dotGraph.getGraph());
     }
 
+    @Test
+    public void testAddNode() {
+        dotGraph.parseGraph("testGraph.dot");
+        dotGraph.addNode("C");
+        Assert.assertTrue(dotGraph.toString().contains("C"));
+    }
+
+    @Test
+    public void testAddDuplicateNode() {
+        dotGraph.parseGraph("testGraph.dot");
+        dotGraph.addNode("B");
+
+        int graphSize = dotGraph.getSize();
+
+        dotGraph.addNode("B");
+
+
+        Assert.assertEquals(graphSize, dotGraph.getSize());
+    }
+
+    @Test
+    public void testAddNodes() {
+        dotGraph.parseGraph("testGraph.dot");
+        String[] addNodes = {"C", "D", "E"};
+        dotGraph.addNodes(addNodes);
+
+
+        for (int i = 0; i < addNodes.length; i++) {
+            String node = addNodes[i];
+            Assert.assertTrue(dotGraph.toString().contains(node));
+        }
+    }
 
 }

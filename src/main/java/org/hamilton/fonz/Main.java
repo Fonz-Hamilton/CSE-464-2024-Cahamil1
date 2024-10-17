@@ -7,5 +7,9 @@ public class Main {
 
         dotGraph.parseGraph("input.dot");
 
+        String[] nodesToAdd = {"Z", "X", "Y"};
+        dotGraph.addNodes(nodesToAdd);
+        System.out.println(dotGraph.toString());
+
     }
 }

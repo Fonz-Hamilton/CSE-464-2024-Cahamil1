@@ -57,7 +57,69 @@ public class DOTGraph {
         return graph.toString();
     }
 
+    /**
+     * Add node and check duplicate labels
+     * @param label: name of node
+     */
+    public void addNode(String label) {
 
+        boolean dupLabel = false;
+        Collection<MutableNode> nodes = graph.nodes();
+
+        MutableNode[] nodeArray = nodes.toArray(new MutableNode[0]);
+        for(int i = 0; i < nodeArray.length; i++) {
+
+            MutableNode node = nodeArray[i];
+            if(node.name().toString().equals(label)) {
+                dupLabel = true;
+                break;
+            }
+        }
+        if(!dupLabel) {
+            graph.add(Factory.mutNode(label));
+            System.out.println("Added node: " + label);
+        }
+        else {
+            System.out.println("Duplicate node: " + label);
+        }
+
+        graph.add(Factory.mutNode(label));
+    }
+
+    /**
+     * Add a list of nodes
+     * @param label: array of nodes
+     */
+    public void addNodes(String[] label) {
+
+        Collection<MutableNode> currentNodes = graph.nodes();
+        MutableNode[] nodeArray = currentNodes.toArray(new MutableNode[0]);
+
+        for (int i = 0; i < label.length; i++) {
+            boolean dupLabel = false;
+
+            for(int j = 0; j < nodeArray.length; j++) {
+                if(nodeArray[j].name().toString().equals(label[i])) {
+                    dupLabel = true;
+                    break;
+                }
+            }
+            if(!dupLabel) {
+                graph.add(Factory.mutNode(label[i]));
+                System.out.println("Added node: " + label[i]);
+            }
+            else {
+
+                System.out.println("Duplicate node: " + label[i]);
+            }
+
+        }
+    }
+
+    // For test method
+    public int getSize() {
+        return graph.nodes().size();
+    }
     // for test method
     public MutableGraph getGraph() {
         return graph;
