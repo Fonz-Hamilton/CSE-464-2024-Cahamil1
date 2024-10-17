@@ -72,5 +72,21 @@ public class DOTGraphTest {
             Assert.assertTrue(dotGraph.toString().contains(node));
         }
     }
+    @Test
+    public void testAddEdge() {
+
+        dotGraph.parseGraph("testGraph.dot");
+
+
+        String srcLabel = "D";
+        String dstLabel = "F";
+        dotGraph.addNode(srcLabel);
+        dotGraph.addNode(dstLabel);
+
+        dotGraph.addEdge(srcLabel, dstLabel);
+
+        Assert.assertTrue(dotGraph.toString().contains("\"" + srcLabel + "\"" + " -> " + "\""+ dstLabel + "\""));
+    }
+
 
 }

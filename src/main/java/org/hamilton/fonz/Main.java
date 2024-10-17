@@ -11,5 +11,7 @@ public class Main {
         dotGraph.addNodes(nodesToAdd);
         System.out.println(dotGraph.toString());
 
+        dotGraph.addEdge("X","Y");
+        System.out.println(dotGraph.toString());
     }
 }

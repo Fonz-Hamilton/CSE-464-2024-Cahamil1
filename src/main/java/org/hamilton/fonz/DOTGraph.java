@@ -116,12 +116,28 @@ public class DOTGraph {
         }
     }
 
+    /**
+     * Add edges to imported graph
+     * @param srcLabel
+     * @param dstLabel
+     */
+    public void addEdge(String srcLabel, String dstLabel) {
+        MutableNode srcNode = Factory.mutNode(srcLabel);
+        MutableNode dstNode = Factory.mutNode(dstLabel);
+
+
+        srcNode.addLink(dstNode);
+        graph.add(srcNode);
+    }
+
     // For test method
     public int getSize() {
         return graph.nodes().size();
     }
     // for test method
     public MutableGraph getGraph() {
+
         return graph;
+
     }
 }
