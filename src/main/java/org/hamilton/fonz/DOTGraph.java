@@ -130,14 +130,43 @@ public class DOTGraph {
         graph.add(srcNode);
     }
 
+    /**
+     * Output imported graph into DOT file
+     * @param path: name of the new file
+     */
+    public void outputDOTGraph(String path) {
+        try {
+            Graphviz.fromGraph(graph).render(Format.DOT).toFile(new File(path));
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+
+    /**
+     * Output imported graph into graphic (PNG)
+     * @param path: name of the new file
+     * @param format: format of the file
+     */
+    public void outputGraphics(String path, String format) {
+        try {
+            if(format.equalsIgnoreCase("png")) {
+                Graphviz.fromGraph(graph).render(Format.PNG).toFile(new File(path));
+            }
+
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // For test method
     public int getSize() {
         return graph.nodes().size();
     }
     // for test method
     public MutableGraph getGraph() {
-
         return graph;
-
     }
 }

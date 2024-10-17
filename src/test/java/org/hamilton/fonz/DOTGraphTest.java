@@ -87,6 +87,30 @@ public class DOTGraphTest {
 
         Assert.assertTrue(dotGraph.toString().contains("\"" + srcLabel + "\"" + " -> " + "\""+ dstLabel + "\""));
     }
+    @Test
+    public void testOutputDOTGraph() throws IOException {
+        dotGraph.parseGraph("testGraph.dot");
+        String path = "output.dot";
 
+        dotGraph.outputDOTGraph(path);
+        File outputFile = new File(path);
+
+        // check if the output file exists
+        Assert.assertTrue(outputFile.exists());
+        outputFile.delete(); // Delete all the stuff
+    }
+
+    @Test
+    public void testOutputGraphics() throws IOException {
+        dotGraph.parseGraph("testGraph.dot");
+        String path = "output.png";
+
+        dotGraph.outputGraphics(path, "png");
+        File outputFile = new File(path);
+
+        // Check if the output file exists
+        Assert.assertTrue(outputFile.exists());
+        outputFile.delete(); // Delete all the stuff
+    }
 
 }

@@ -13,5 +13,9 @@ public class Main {
 
         dotGraph.addEdge("X","Y");
         System.out.println(dotGraph.toString());
+
+        dotGraph.outputDOTGraph("output.dot");
+
+        dotGraph.outputGraphics("output","png");
     }
 }
