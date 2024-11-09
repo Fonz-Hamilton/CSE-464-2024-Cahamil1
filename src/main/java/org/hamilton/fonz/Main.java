@@ -28,5 +28,17 @@ public class Main {
         dotGraph.outputGraphics("output","png");
 
          */
+
+        System.out.println(dotGraph.toString());
+        dotGraph.removeNode("l");
+        System.out.println(dotGraph.toString());
+
+        dotGraph.removeNodes(nodesToAdd);
+        System.out.println(dotGraph.toString());
+
+        dotGraph.removeEdge("r","h");
+        System.out.println(dotGraph.toString());
+
+
     }
 }

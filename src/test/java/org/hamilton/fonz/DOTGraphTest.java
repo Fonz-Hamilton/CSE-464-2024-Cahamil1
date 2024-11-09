@@ -1,6 +1,7 @@
 package org.hamilton.fonz;
 
 
+import guru.nidi.graphviz.model.MutableGraph;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,6 +9,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 
 public class DOTGraphTest {
@@ -57,7 +62,7 @@ public class DOTGraphTest {
         dotGraph.addNode("B");
 
 
-        Assert.assertEquals(graphSize, dotGraph.getSize());
+        assertEquals(graphSize, dotGraph.getSize());
     }
 
     @Test
@@ -111,6 +116,65 @@ public class DOTGraphTest {
         // Check if the output file exists
         Assert.assertTrue(outputFile.exists());
         outputFile.delete(); // Delete all the stuff
+    }
+
+    @Test
+    public void testRemoveNodeCorrect() {
+        dotGraph.parseGraph("testGraph.dot");
+
+
+        // Remove a node and an edge
+        dotGraph.removeNode("A");
+
+
+        // Assertions: Check that node "B" and edge "A" -> "C" are removed
+        Assert.assertFalse(dotGraph.toString().contains("A"));
+    }
+    @Test
+    public void testRemoveNodeIncorrect() {
+        dotGraph.parseGraph("testGraph.dot");
+        String label = "l";
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            dotGraph.removeNode(label);
+        });
+        assertEquals("Node with label \"" + label + "\" does not exist in the graph.", exception.getMessage());
+    }
+
+    @Test
+    public void testRemoveEdgeCorrect() {
+        dotGraph.parseGraph("testGraph.dot");
+        String srcLabel = "A";
+        String dstLabel = "B";
+        dotGraph.removeEdge(srcLabel, dstLabel);
+
+        Assert.assertFalse(dotGraph.toString().contains("\"" + srcLabel + "\"" + " -> " + "\""+ dstLabel + "\""));
+    }
+
+    @Test
+    public void testRemoveEdgeIncorrect() {
+        dotGraph.parseGraph("testGraph.dot");
+        String srcLabel = "c";
+        String dstLabel = "l";
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            dotGraph.removeEdge(srcLabel, dstLabel);
+        });
+
+        assertEquals("Edge from " + srcLabel + " to " + dstLabel + " does not exist.", exception.getMessage());
+
+    }
+
+    @Test
+    public void testRemoveNodeAndEdgesCorrect() {
+        dotGraph.parseGraph("testGraph.dot");
+        dotGraph.addNode("v");
+        dotGraph.addEdge("v", "A");
+
+        dotGraph.removeNode("v");
+        dotGraph.removeEdge("A", "B");
+        Assert.assertFalse(dotGraph.toString().contains("v"));
+        Assert.assertFalse(dotGraph.toString().contains("\"" + "A" + "\"" + " -> " + "\""+ "B"+ "\""));
     }
 
 }
