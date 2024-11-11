@@ -30,15 +30,17 @@ public class Main {
          */
 
         System.out.println(dotGraph.toString());
-        dotGraph.removeNode("l");
+        dotGraph.removeNode("G");
         System.out.println(dotGraph.toString());
 
         dotGraph.removeNodes(nodesToAdd);
         System.out.println(dotGraph.toString());
 
-        dotGraph.removeEdge("r","h");
-        System.out.println(dotGraph.toString());
+        //dotGraph.removeEdge("a","h");
+        //System.out.println(dotGraph.toString());
 
+        Path path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"));
+        System.out.println(path.printPath());
 
     }
 }

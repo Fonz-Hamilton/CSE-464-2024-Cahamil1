@@ -1,5 +1,6 @@
 package org.hamilton.fonz;
 
+import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
@@ -23,9 +24,11 @@ import java.util.regex.Pattern;
 
 public class DOTGraph {
     private MutableGraph graph;
+    private static int time;            // for the DFS search that doesn't really need to be used
 
     /**
      * Parse a DOT file and output a graph object
+     *
      * @param filepath: filepath of the DOT file
      */
     public void parseGraph(String filepath) {
@@ -45,14 +48,14 @@ public class DOTGraph {
             graph = new Parser().read(new File(file));
 
             System.out.println("Graph parsed");
-        }
-        catch(IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
             graph = null;
             System.out.println("Could not parse graph");
 
         }
     }
+
     @Override
     public String toString() {
         return graph.toString();
@@ -60,6 +63,7 @@ public class DOTGraph {
 
     /**
      * Add node and check duplicate labels
+     *
      * @param label: name of node
      */
     public void addNode(String label) {
@@ -69,19 +73,18 @@ public class DOTGraph {
 
         // to search through the nodes
         MutableNode[] nodeArray = nodes.toArray(new MutableNode[0]);
-        for(int i = 0; i < nodeArray.length; i++) {
+        for (int i = 0; i < nodeArray.length; i++) {
 
             MutableNode node = nodeArray[i];
-            if(node.name().toString().equals(label)) {
+            if (node.name().toString().equals(label)) {
                 dupLabel = true;
                 break;
             }
         }
-        if(!dupLabel) {
+        if (!dupLabel) {
             graph.add(Factory.mutNode(label));
             System.out.println("Added node: " + label);
-        }
-        else {
+        } else {
             System.out.println("Duplicate node: " + label);
         }
 
@@ -90,6 +93,7 @@ public class DOTGraph {
 
     /**
      * Add a list of nodes
+     *
      * @param label: array of nodes
      */
     public void addNodes(String[] label) {
@@ -100,17 +104,16 @@ public class DOTGraph {
         for (int i = 0; i < label.length; i++) {
             boolean dupLabel = false;
 
-            for(int j = 0; j < nodeArray.length; j++) {
-                if(nodeArray[j].name().toString().equals(label[i])) {
+            for (int j = 0; j < nodeArray.length; j++) {
+                if (nodeArray[j].name().toString().equals(label[i])) {
                     dupLabel = true;
                     break;
                 }
             }
-            if(!dupLabel) {
+            if (!dupLabel) {
                 graph.add(Factory.mutNode(label[i]));
                 System.out.println("Added node: " + label[i]);
-            }
-            else {
+            } else {
 
                 System.out.println("Duplicate node: " + label[i]);
             }
@@ -120,6 +123,7 @@ public class DOTGraph {
 
     /**
      * Add edges to imported graph
+     *
      * @param srcLabel
      * @param dstLabel
      */
@@ -134,13 +138,13 @@ public class DOTGraph {
 
     /**
      * Output imported graph into DOT file
+     *
      * @param path: name of the new file
      */
     public void outputDOTGraph(String path) {
         try {
             Graphviz.fromGraph(graph).render(Format.DOT).toFile(new File(path));
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
 
         }
@@ -148,17 +152,17 @@ public class DOTGraph {
 
     /**
      * Output imported graph into graphic (PNG)
-     * @param path: name of the new file
+     *
+     * @param path:   name of the new file
      * @param format: format of the file
      */
     public void outputGraphics(String path, String format) {
         try {
-            if(format.equalsIgnoreCase("png")) {
+            if (format.equalsIgnoreCase("png")) {
                 Graphviz.fromGraph(graph).render(Format.PNG).toFile(new File(path));
             }
 
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -225,6 +229,85 @@ public class DOTGraph {
         graph = rebuild(graphString);
 
     }
+
+    public Path graphSearch(MutableNode src, MutableNode dst) {
+
+        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
+        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
+        GraphNode srcNode = new GraphNode(src);                         // source node
+        GraphNode dstNode = new GraphNode(dst);                         // destination node
+
+
+        // initialize GraphNode "structs"
+        for (int i = 0; i < nodes.size(); i++) {
+
+            // initialize the source node separately
+            if (!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
+                graphNodes.add(new GraphNode(nodes.get(i)));
+
+            }
+        }
+
+        srcNode.setColor((byte) 0);      // set source node to grey
+        srcNode.setDst(0);              // distance is 0 since it is source node
+        srcNode.setPredecessor(null);   // no predecessor
+        graphNodes.add(srcNode);        // add to array
+
+        // initialize destination node
+        dstNode.setColor((byte) 0);
+        dstNode.setDst(Integer.MAX_VALUE);
+        dstNode.setPredecessor(null);
+        graphNodes.add(dstNode);
+        DFSVisit(graphNodes, srcNode,dst);
+
+        for(int i = 0; i <graphNodes.size(); i++) {
+            if(graphNodes.get(i).equals(srcNode)) {
+                if(graphNodes.get(i).getColor() == 0) {
+                    DFSVisit(graphNodes, graphNodes.get(i), dst);
+                }
+            }
+
+        }
+        dstNode.setNode(dst);
+        return new Path(srcNode, dstNode);
+    }
+    private boolean destinationFound = false;
+    private void DFSVisit(ArrayList<GraphNode> graphNodes, GraphNode graphNode,MutableNode dst) {
+        if (destinationFound) return;       // need this to stop the search when it finds the node
+        time++;                             // not needed but was a variable in CLRS algorithms book
+        graphNode.setDst(time);             // same as above
+        graphNode.setColor((byte) 1);
+
+        if(graphNode.getNode().equals(dst)) {
+            destinationFound = true;        // again need to end if recursion if destination found
+            return;
+        }
+
+        for (Link link : graphNode.getNode().links()) {
+            Label label = link.to().name();             // find the link
+            //test
+            //System.out.println("currentNode: " + graphNode.getNode().name() + "; link: " + label.toString());
+
+            // goes through the arrayList and finds matching node using link
+            // nodes in this loop are adjacent nodes found through edge link
+            for (int i = 0; i < graphNodes.size(); i++) {
+                if (graphNodes.get(i).getNode().name().toString().equals(label.toString())) {
+
+                    // if color is white (not visited)
+                    if (graphNodes.get(i).getColor() == 0) {
+                        graphNodes.get(i).setPredecessor(graphNode);
+                        DFSVisit(graphNodes, graphNodes.get(i),dst);
+                        if (destinationFound) return;       // set the variable that it was found
+                    }
+                }
+            }
+
+        }
+        graphNode.setColor((byte) 2);
+        time++;
+        graphNode.setTime(time);
+    }
+
 
     // For test method
     protected int getSize() {
@@ -295,5 +378,13 @@ public class DOTGraph {
         // Clean up extra whitespace and newlines left over after removal
         String cleanupRegex = "(?m)\\n\\s*\\n";  // Match consecutive newlines or newlines with spaces
         return graphString;
+    }
+    public MutableNode getNode(String label) {
+        for(MutableNode node : graph.nodes()) {
+            if(node.name().toString().equals(label)) {
+                return node;
+            }
+        }
+        return null;
     }
 }
