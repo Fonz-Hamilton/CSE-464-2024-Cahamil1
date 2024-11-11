@@ -45,11 +45,11 @@ public class Main {
         //dotGraph.removeEdge("a","h");
         //System.out.println(dotGraph.toString());
 
-        Path path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
+        Path path = dotGraph.graphSearch(dotGraph.getNode("c"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
         System.out.println("DFS: \n" + path.printPath());
 
 
-        path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"), DOTGraph.Algorithm.BFS);
+        path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("h"), DOTGraph.Algorithm.BFS);
         System.out.println("BFS: \n" + path.printPath());
     }
 }
