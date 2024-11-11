@@ -1,5 +1,6 @@
 package org.hamilton.fonz;
 
+import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
@@ -12,6 +13,7 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -203,10 +205,13 @@ public class DOTGraph {
 
         for (int i = 0; i < nodes.size(); i++) {
             MutableNode node = nodes.get(i);
+
             if (node.name().toString().equals(srcLabel)) {
                 List<Link> links = new ArrayList<>(node.links());
+
                 for (int j = 0; j < links.size(); j++) {
                     Link link = links.get(j);
+
                     if (link.to().name().toString().equals(dstLabel)) {
                         edgeExists = true;
                         break;
@@ -226,6 +231,79 @@ public class DOTGraph {
 
     }
 
+    /**
+     * Busted out my CSE310 book for this one
+     * @param src
+     * @param dst
+     * @return
+     */
+    public Path graphSearch(MutableNode src, MutableNode dst) {
+
+        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
+        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
+        GraphNode srcNode = new GraphNode(src);                         // source node
+        GraphNode dstNode = new GraphNode(dst);                         // destination node
+
+        // initialize GraphNode "structs"
+        for(int i = 0; i < nodes.size(); i++) {
+
+            // initialize the source node separately
+            if(!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
+                graphNodes.add(new GraphNode(nodes.get(i)));
+
+            }
+        }
+
+        srcNode.setColor((byte)1);      // set source node to grey
+        srcNode.setDst(0);              // distance is 0 since it is source node
+        srcNode.setPredecessor(null);   // no predecessor
+        graphNodes.add(srcNode);        // add to array
+
+        // initialize destination node
+        dstNode.setColor((byte)0);
+        dstNode.setDst(Integer.MAX_VALUE);
+        dstNode.setPredecessor(null);
+        graphNodes.add(dstNode);
+
+        // new queue (FIFO)
+        Queue<GraphNode> queue = new LinkedList<>();
+        queue.add(srcNode);             // start with source node
+
+        while(!queue.isEmpty()) {
+            GraphNode currentNode = queue.remove();     // pop from queue
+            //test
+            //System.out.println(currentNode.getNode().name());
+
+            // should cycle through all edges of node
+            for(Link link : currentNode.getNode().links()) {
+                Label label = link.to().name();             // find the link
+                System.out.println("currentNode: " + currentNode.getNode().name() +"; link: " + label.toString());
+
+                // goes through the arrayList and finds matching node using link
+                // nodes in this loop are adjacent nodes found through edge link
+                for(int i = 0; i < graphNodes.size(); i++) {
+                    if(graphNodes.get(i).getNode().name().toString().equals(label.toString())) {
+                        // if color is white (not visited)
+                        if(graphNodes.get(i).getColor() == 0) {
+
+                            graphNodes.get(i).setColor((byte)1);    // set color to gray
+                            graphNodes.get(i).setDst(currentNode.getDst() + 1);
+                            graphNodes.get(i).setPredecessor(currentNode);
+
+                            //test
+                            //System.out.println(graphNodes.get(i).getNode().name()+ " is node and its Predecessor in DOTGraph: " + graphNodes.get(i).getPredecessor().getNode().name());
+                            //System.out.println("Node added to Q: " + graphNodes.get(i).getNode().name());
+                            queue.add(graphNodes.get(i));
+                        }
+                    }
+                }
+            }
+            currentNode.setColor((byte)2);  // node is done ("black")
+        }
+
+        return new Path( srcNode, dstNode);
+    }
+
     // For test method
     protected int getSize() {
         return graph.nodes().size();
@@ -234,7 +312,6 @@ public class DOTGraph {
     protected MutableGraph getGraph() {
         return graph;
     }
-
 
     /**
      *
@@ -264,11 +341,11 @@ public class DOTGraph {
     private String removeNodeRegEx(String graphString, String label) {
 
         // I hate regex
-        // remove edges where the node is the destination ("A" -> "B")
+        // remove edges where the node is the destination ( -> "B")
         String edgeDestRegex = "(?m)\"[^\"]*\"\\s*->\\s*\"" + label + "\"\\s*;?\\s*";
         graphString = graphString.replaceAll(edgeDestRegex, "");
 
-        // remove edges where the node is the source ("A" -> "B")
+        // remove edges where the node is the source ("A" -> )
         String edgeSourceRegex = "(?m)\"" + label + "\"\\s*->\\s*\"[^\"]*\"\\s*;?\\s*";
         graphString = graphString.replaceAll(edgeSourceRegex, "");
 
@@ -293,7 +370,17 @@ public class DOTGraph {
         graphString = graphString.replaceAll(edgeRegex, "");
 
         // Clean up extra whitespace and newlines left over after removal
-        String cleanupRegex = "(?m)\\n\\s*\\n";  // Match consecutive newlines or newlines with spaces
+        String cleanupRegex = "(?m)\\n\\s*\\n";
         return graphString;
     }
+
+    public MutableNode getNode(String label) {
+        for(MutableNode node : graph.nodes()) {
+            if(node.name().toString().equals(label)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
 }
