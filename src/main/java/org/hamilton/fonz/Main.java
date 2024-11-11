@@ -46,10 +46,10 @@ public class Main {
         //System.out.println(dotGraph.toString());
 
         Path path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
-        System.out.println(path.printPath());
+        System.out.println("DFS: \n" + path.printPath());
 
 
-        path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("d"), DOTGraph.Algorithm.BFS);
-        System.out.println(path.printPath());
+        path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"), DOTGraph.Algorithm.BFS);
+        System.out.println("BFS: \n" + path.printPath());
     }
 }

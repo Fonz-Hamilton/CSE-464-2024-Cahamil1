@@ -15,14 +15,6 @@ public class Path {
     }
 
     private void pathBuilder(GraphNode src, GraphNode dst) {
-       // System.out.println("dstNode: " + dst.getNode().name());
-
-        this.src = src;
-        this.dst = dst;
-
-    }
-
-    private void pathBuilder(GraphNode src, GraphNode dst) {
         //test
         //System.out.println("dstNode: " + dst.getNode().name());
         if(dst.getNode().equals(src.getNode())) {

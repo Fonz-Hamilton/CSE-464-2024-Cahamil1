@@ -292,7 +292,8 @@ public class DOTGraph {
             // should cycle through all edges of node
             for(Link link : currentNode.getNode().links()) {
                 Label label = link.to().name();             // find the link
-                System.out.println("currentNode: " + currentNode.getNode().name() +"; link: " + label.toString());
+                //test
+                //System.out.println("currentNode: " + currentNode.getNode().name() +"; link: " + label.toString());
 
                 // goes through the arrayList and finds matching node using link
                 // nodes in this loop are adjacent nodes found through edge link
