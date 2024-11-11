@@ -7,6 +7,7 @@ public class GraphNode {
     private GraphNode predecessor;
     private byte color;
     private int dst;
+    private int time;
 
     public GraphNode(MutableNode node) {
         this.node = node;
@@ -41,5 +42,10 @@ public class GraphNode {
     public int getDst() {
         return dst;
     }
-
+    public void setTime(int time) {
+        this.time = time;
+    }
+    public int getTime() {
+        return time;
+    }
 }

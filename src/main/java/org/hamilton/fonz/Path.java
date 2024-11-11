@@ -1,4 +1,8 @@
 package org.hamilton.fonz;
+import guru.nidi.graphviz.model.MutableNode;
+
+import java.util.List;
+import java.util.ArrayList;
 
 public class Path {
     private GraphNode src;
@@ -11,7 +15,16 @@ public class Path {
     }
 
     private void pathBuilder(GraphNode src, GraphNode dst) {
-        System.out.println("dstNode: " + dst.getNode().name());
+       // System.out.println("dstNode: " + dst.getNode().name());
+
+        this.src = src;
+        this.dst = dst;
+
+    }
+
+    private void pathBuilder(GraphNode src, GraphNode dst) {
+        //test
+        //System.out.println("dstNode: " + dst.getNode().name());
         if(dst.getNode().equals(src.getNode())) {
 
             pathString = pathString + src.getNode().name();
@@ -30,6 +43,7 @@ public class Path {
     }
 
     public String printPath() {
+        pathString = "";
         pathBuilder(src, dst);
         return pathString;
     }

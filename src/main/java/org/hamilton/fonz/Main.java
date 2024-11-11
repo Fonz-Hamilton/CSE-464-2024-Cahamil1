@@ -36,12 +36,20 @@ public class Main {
         dotGraph.removeNodes(nodesToAdd);
         System.out.println(dotGraph.toString());
 
+
         //dotGraph.removeEdge("a","b");
         //System.out.println(dotGraph.toString());
 
         //dotGraph.test("e");
 
-        Path path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("d"));
+        //dotGraph.removeEdge("a","h");
+        //System.out.println(dotGraph.toString());
+
+        Path path = dotGraph.graphSearch(dotGraph.getNode("b"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
+        System.out.println(path.printPath());
+
+
+        path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("d"), DOTGraph.Algorithm.BFS);
         System.out.println(path.printPath());
     }
 }
