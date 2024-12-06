@@ -250,129 +250,20 @@ public class DOTGraph {
      * @return Path
      */
     public Path graphSearch(MutableNode src, MutableNode dst, Algorithm algo) {
+        BFS bfs = new BFS(graph);
+        DFS dfs = new DFS(graph);
+
         if(src != null && dst != null) {
             if (algo == Algorithm.BFS) {
-                return bfsSearch(src, dst);
+                return bfs.search(src, dst);
             }
             else if (algo == Algorithm.DFS) {
-                return dfsSearch(src, dst);
+                return dfs.search(src, dst);
             }
         }
         return new Path(null, null);
 
 	}
-
-    /**
-     * A Breadth first search method. Searches the graph
-     * @param src the starting node
-     * @param dst the destination node
-     * @return Path
-     */
-    public Path bfsSearch(MutableNode src, MutableNode dst) {
-        ArrayList<GraphNode> graphNodes = initNodes(src,dst,(byte)1);
-        GraphNode srcNode = graphNodes.get(graphNodes.size() - 2);
-        GraphNode dstNode = graphNodes.get(graphNodes.size() - 1);
-
-        // new queue (FIFO)
-        Queue<GraphNode> queue = new LinkedList<>();
-        queue.add(srcNode);             // start with source node
-
-        while(!queue.isEmpty()) {
-            GraphNode currentNode = queue.remove();     // pop from queue
-            //test
-            //System.out.println(currentNode.getNode().name());
-
-            // should cycle through all edges of node
-            for(Link link : currentNode.getNode().links()) {
-                Label label = link.to().name();             // find the link
-                //test
-                //System.out.println("currentNode: " + currentNode.getNode().name() +"; link: " + label.toString());
-
-                // goes through the arrayList and finds matching node using link
-                // nodes in this loop are adjacent nodes found through edge link
-                for(int i = 0; i < graphNodes.size(); i++) {
-                    if(graphNodes.get(i).getNode().name().toString().equals(label.toString())) {
-                        // if color is white (not visited)
-                        if(graphNodes.get(i).getColor() == 0) {
-
-                            graphNodes.get(i).setColor((byte)1);    // set color to gray
-                            graphNodes.get(i).setDst(currentNode.getDst() + 1);
-                            graphNodes.get(i).setPredecessor(currentNode);
-
-                            //test
-                            //System.out.println(graphNodes.get(i).getNode().name()+ " is node and its Predecessor in DOTGraph: " + graphNodes.get(i).getPredecessor().getNode().name());
-                            //System.out.println("Node added to Q: " + graphNodes.get(i).getNode().name());
-                            queue.add(graphNodes.get(i));
-                        }
-                    }
-                }
-            }
-            currentNode.setColor((byte)2);  // node is done ("black")
-        }
-
-        return new Path( srcNode, dstNode);
-    }
-
-    /**
-     * A depth first search method. Searches the graph
-     * @param src the starting node
-     * @param dst the destination node
-     * @return Path
-     */
-    public Path dfsSearch(MutableNode src, MutableNode dst) {
-
-        ArrayList<GraphNode> graphNodes = initNodes(src,dst,(byte)0);
-        GraphNode srcNode = graphNodes.get(graphNodes.size() - 2);  // in initNodes the srcNode gets added second to last
-        GraphNode dstNode = graphNodes.get(graphNodes.size() - 1);  // in initNodes the dstNode gets added last
-        time = 0;
-        srcNode.setTime(time);
-        DFSVisit(graphNodes, srcNode,dst);
-
-        //dstNode.setNode(dst);
-        return new Path(srcNode, dstNode);
-    }
-
-    /**
-     * A helper method for DFS. handles the visits of nodes
-     * @param graphNodes An ArrayList of graph nodes
-     * @param graphNode A single GraphNode
-     * @param dst the destination node
-     */
-    private void DFSVisit(ArrayList<GraphNode> graphNodes, GraphNode graphNode,MutableNode dst) {
-        if (destinationFound) return;       // need this to stop the search when it finds the node
-        time++;                             // not needed but was a variable in CLRS algorithms book
-        graphNode.setTime(time);             // same as above
-        graphNode.setColor((byte) 1);
-
-        if(graphNode.getNode().equals(dst)) {
-            destinationFound = true;        // again need to end recursion if destination found
-            return;
-        }
-
-        for (Link link : graphNode.getNode().links()) {
-            Label label = link.to().name();             // find the link
-            //test
-            //System.out.println("currentNode: " + graphNode.getNode().name() + "; link: " + label.toString());
-
-            // goes through the arrayList and finds matching node using link
-            // nodes in this loop are adjacent nodes found through edge link
-            for (int i = 0; i < graphNodes.size(); i++) {
-                if (graphNodes.get(i).getNode().name().toString().equals(label.toString())) {
-
-                    // if color is white (not visited)
-                    if (graphNodes.get(i).getColor() == 0) {
-                        graphNodes.get(i).setPredecessor(graphNode);
-                        DFSVisit(graphNodes, graphNodes.get(i),dst);
-                        if (destinationFound) return;       // set the variable that it was found
-                    }
-                }
-            }
-
-        }
-        graphNode.setColor((byte) 2);
-        time++;
-        graphNode.setFinalTime(time);
-    }
 
     /**
      * Method for testing
@@ -470,44 +361,5 @@ public class DOTGraph {
             }
         }
         return null;
-    }
-
-    /**
-     * Helper method. Initialize the GraphNode ArrayList
-     * @param src the source node
-     * @param dst the destination node
-     * @param color the color of the source node (grey for bfs, white for dfs)
-     * @return ArrayList of graphNodes
-     */
-    private ArrayList<GraphNode> initNodes(MutableNode src, MutableNode dst, byte color) {
-        //bfs
-        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
-        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
-        GraphNode srcNode = new GraphNode(src);                         // source node
-        GraphNode dstNode = new GraphNode(dst);                         // destination node
-
-        // initialize GraphNode "structs"
-        for(int i = 0; i < nodes.size(); i++) {
-
-            // initialize the source node and destination node separately
-            if(!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
-                graphNodes.add(new GraphNode(nodes.get(i)));
-
-            }
-        }
-
-        // initialize source node
-        srcNode.setColor(color);        // set source node to grey or white (Seems to not matter actually should see why)
-        srcNode.setDst(0);              // distance is 0 since it is source node
-        srcNode.setPredecessor(null);   // no predecessor
-        graphNodes.add(srcNode);        // add to array
-
-        // initialize destination node
-        dstNode.setColor((byte)0);
-        dstNode.setDst(Integer.MAX_VALUE);
-        dstNode.setPredecessor(null);
-        graphNodes.add(dstNode);
-
-        return graphNodes;
     }
 }
