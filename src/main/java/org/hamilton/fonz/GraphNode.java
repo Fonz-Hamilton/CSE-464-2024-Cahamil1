@@ -2,13 +2,16 @@ package org.hamilton.fonz;
 
 import guru.nidi.graphviz.model.MutableNode;
 
+/**
+ * GraphNode stores information about nodes for use in search
+ */
 public class GraphNode {
     private MutableNode node;
     private GraphNode predecessor;
     private byte color;
     private int dst;
     private int time;
-    private int finalTime;
+    private int finalTime;      // could be used later if time is needed for dfs in the future
 
     /**
      * Constructor for GraphNode class

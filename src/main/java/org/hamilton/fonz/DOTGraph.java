@@ -6,21 +6,15 @@ import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.*;
 import guru.nidi.graphviz.parse.Parser;
 import guru.nidi.graphviz.model.MutableGraph;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * DOTGraph modifies and outputs a graph in DOT format
@@ -328,6 +322,7 @@ public class DOTGraph {
         GraphNode srcNode = graphNodes.get(graphNodes.size() - 2);  // in initNodes the srcNode gets added second to last
         GraphNode dstNode = graphNodes.get(graphNodes.size() - 1);  // in initNodes the dstNode gets added last
         time = 0;
+        srcNode.setTime(time);
         DFSVisit(graphNodes, srcNode,dst);
 
         //dstNode.setNode(dst);

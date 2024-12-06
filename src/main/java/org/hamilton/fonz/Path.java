@@ -1,12 +1,11 @@
 package org.hamilton.fonz;
-import guru.nidi.graphviz.model.MutableNode;
 
-import java.util.List;
-import java.util.ArrayList;
-
+/**
+ * Makes a path between nodes
+ */
 public class Path {
-    private GraphNode src;
-    private GraphNode dst;
+    private final GraphNode src;
+    private final GraphNode dst;
     private String pathString = "";
 
     /**
