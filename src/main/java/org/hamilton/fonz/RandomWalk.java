@@ -4,9 +4,7 @@ import guru.nidi.graphviz.model.Link;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class RandomWalk extends GraphSearchTemplate{
 
@@ -17,9 +15,9 @@ public class RandomWalk extends GraphSearchTemplate{
     protected void traverse(ArrayList<GraphNode> graphNodes, GraphNode srcNode, MutableNode dst) {
 
         Random random = new Random();
-
         GraphNode currentNode = srcNode;
         List<GraphNode> visitedNodes = new ArrayList<>();
+        //Set<GraphNode> globallyVisited = new HashSet<>();
 
         while (true) {
             visitedNodes.add(currentNode);
@@ -40,7 +38,6 @@ public class RandomWalk extends GraphSearchTemplate{
                 for (int j = 0; j < graphNodes.size(); j++) {
                     GraphNode neighbor = graphNodes.get(j);
                     if (neighbor.getNode().name().equals(label)) {
-
                         neighbors.add(neighbor);
                     }
                 }
@@ -52,7 +49,6 @@ public class RandomWalk extends GraphSearchTemplate{
                 currentNode = srcNode; // Restart at the source node
                 visitedNodes.clear(); // Clear the visited path since it's a new attempt
                 continue; // Restart the loop
-
             }
 
             int randomIndex = random.nextInt(neighbors.size());
@@ -62,7 +58,5 @@ public class RandomWalk extends GraphSearchTemplate{
             nextNode.setPredecessor(currentNode);
             currentNode = nextNode;
         }
-
-
     }
 }
