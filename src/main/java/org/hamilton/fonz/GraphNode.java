@@ -8,6 +8,7 @@ public class GraphNode {
     private byte color;
     private int dst;
     private int time;
+    private int finalTime;
 
     /**
      * Constructor for GraphNode class
@@ -98,5 +99,9 @@ public class GraphNode {
      */
     public int getTime() {
         return time;
+    }
+
+    public void setFinalTime(int finalTime) {
+        this.finalTime = finalTime;
     }
 }

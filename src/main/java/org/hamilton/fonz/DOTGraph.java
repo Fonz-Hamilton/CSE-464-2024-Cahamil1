@@ -42,7 +42,7 @@ public class DOTGraph {
         try {
             // This is super redundant probably, but I want the file path in the method and don't
             // want to change the parameters given in the pdf. just want user to enter name
-            // of file with no path
+            // of file with no path. file should be in resources
             URL locator = getClass().getClassLoader().getResource(filepath);
 
             if (locator == null) {
@@ -272,31 +272,9 @@ public class DOTGraph {
      * @return Path
      */
     public Path bfsSearch(MutableNode src, MutableNode dst) {
-        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
-        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
-        GraphNode srcNode = new GraphNode(src);                         // source node
-        GraphNode dstNode = new GraphNode(dst);                         // destination node
-
-        // initialize GraphNode "structs"
-        for(int i = 0; i < nodes.size(); i++) {
-
-            // initialize the source node separately
-            if(!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
-                graphNodes.add(new GraphNode(nodes.get(i)));
-
-            }
-        }
-
-        srcNode.setColor((byte)1);      // set source node to grey
-        srcNode.setDst(0);              // distance is 0 since it is source node
-        srcNode.setPredecessor(null);   // no predecessor
-        graphNodes.add(srcNode);        // add to array
-
-        // initialize destination node
-        dstNode.setColor((byte)0);
-        dstNode.setDst(Integer.MAX_VALUE);
-        dstNode.setPredecessor(null);
-        graphNodes.add(dstNode);
+        ArrayList<GraphNode> graphNodes = initNodes(src,dst,(byte)1);
+        GraphNode srcNode = graphNodes.get(graphNodes.size() - 2);
+        GraphNode dstNode = graphNodes.get(graphNodes.size() - 1);
 
         // new queue (FIFO)
         Queue<GraphNode> queue = new LinkedList<>();
@@ -345,42 +323,14 @@ public class DOTGraph {
      * @return Path
      */
     public Path dfsSearch(MutableNode src, MutableNode dst) {
-        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
-        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
-        GraphNode srcNode = new GraphNode(src);                         // source node
-        GraphNode dstNode = new GraphNode(dst);                         // destination node
 
-        // initialize GraphNode "structs"
-        for (int i = 0; i < nodes.size(); i++) {
-
-            // initialize the source node separately
-            if (!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
-                graphNodes.add(new GraphNode(nodes.get(i)));
-
-            }
-        }
-
-        srcNode.setColor((byte) 0);      // set source node to grey
-        srcNode.setDst(0);              // distance is 0 since it is source node
-        srcNode.setPredecessor(null);   // no predecessor
-        graphNodes.add(srcNode);        // add to array
-
-        // initialize destination node
-        dstNode.setColor((byte) 0);
-        dstNode.setDst(Integer.MAX_VALUE);
-        dstNode.setPredecessor(null);
-        graphNodes.add(dstNode);
+        ArrayList<GraphNode> graphNodes = initNodes(src,dst,(byte)0);
+        GraphNode srcNode = graphNodes.get(graphNodes.size() - 2);  // in initNodes the srcNode gets added second to last
+        GraphNode dstNode = graphNodes.get(graphNodes.size() - 1);  // in initNodes the dstNode gets added last
+        time = 0;
         DFSVisit(graphNodes, srcNode,dst);
 
-        for(int i = 0; i <graphNodes.size(); i++) {
-            if(graphNodes.get(i).equals(srcNode)) {
-                if(graphNodes.get(i).getColor() == 0) {
-                    DFSVisit(graphNodes, graphNodes.get(i), dst);
-                }
-            }
-
-        }
-        dstNode.setNode(dst);
+        //dstNode.setNode(dst);
         return new Path(srcNode, dstNode);
     }
 
@@ -393,7 +343,7 @@ public class DOTGraph {
     private void DFSVisit(ArrayList<GraphNode> graphNodes, GraphNode graphNode,MutableNode dst) {
         if (destinationFound) return;       // need this to stop the search when it finds the node
         time++;                             // not needed but was a variable in CLRS algorithms book
-        graphNode.setDst(time);             // same as above
+        graphNode.setTime(time);             // same as above
         graphNode.setColor((byte) 1);
 
         if(graphNode.getNode().equals(dst)) {
@@ -423,7 +373,7 @@ public class DOTGraph {
         }
         graphNode.setColor((byte) 2);
         time++;
-        graphNode.setTime(time);
+        graphNode.setFinalTime(time);
     }
 
     /**
@@ -522,5 +472,44 @@ public class DOTGraph {
             }
         }
         return null;
+    }
+
+    /**
+     * Helper method. Initialize the GraphNode ArrayList
+     * @param src the source node
+     * @param dst the destination node
+     * @param color the color of the source node (grey for bfs, white for dfs)
+     * @return ArrayList of graphNodes
+     */
+    private ArrayList<GraphNode> initNodes(MutableNode src, MutableNode dst, byte color) {
+        //bfs
+        ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
+        ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
+        GraphNode srcNode = new GraphNode(src);                         // source node
+        GraphNode dstNode = new GraphNode(dst);                         // destination node
+
+        // initialize GraphNode "structs"
+        for(int i = 0; i < nodes.size(); i++) {
+
+            // initialize the source node and destination node separately
+            if(!nodes.get(i).equals(src) && !nodes.get(i).equals(dst)) {
+                graphNodes.add(new GraphNode(nodes.get(i)));
+
+            }
+        }
+
+        // initialize source node
+        srcNode.setColor(color);        // set source node to grey or white (Seems to not matter actually should see why)
+        srcNode.setDst(0);              // distance is 0 since it is source node
+        srcNode.setPredecessor(null);   // no predecessor
+        graphNodes.add(srcNode);        // add to array
+
+        // initialize destination node
+        dstNode.setColor((byte)0);
+        dstNode.setDst(Integer.MAX_VALUE);
+        dstNode.setPredecessor(null);
+        graphNodes.add(dstNode);
+
+        return graphNodes;
     }
 }
