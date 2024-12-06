@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
-public abstract class GraphSearchTemplate {
+public abstract class GraphSearchTemplate{
 
     protected final MutableGraph graph;
     protected boolean destinationFound = false;

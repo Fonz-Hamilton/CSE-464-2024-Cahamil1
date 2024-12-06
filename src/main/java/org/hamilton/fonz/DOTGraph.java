@@ -250,7 +250,7 @@ public class DOTGraph {
      * @return Path
      */
     public Path graphSearch(MutableNode src, MutableNode dst, Algorithm algo) {
-        GraphSearchTemplate strategy;
+        GraphSearchStrategy strategy;
 
         if (src != null && dst != null) {
             switch (algo) {
