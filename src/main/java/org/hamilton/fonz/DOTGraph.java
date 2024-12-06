@@ -22,18 +22,20 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * DOTGraph modifies and outputs a graph in DOT format
+ */
 public class DOTGraph {
     private MutableGraph graph;
     private static int time;            // for the DFS search that doesn't really need to be used
+    private boolean destinationFound = false; // A boolean used for DFSVisit. Scope needs to be outside the method
 
 	public enum Algorithm {
     BFS, DFS
-}
+    }
 
     /**
      * Parse a DOT file and output a graph object
-     *
      * @param filepath: filepath of the DOT file
      */
     public void parseGraph(String filepath) {
@@ -61,14 +63,17 @@ public class DOTGraph {
         }
     }
 
+    /**
+     * A toString method that turns the DOT graph into a String object
+     * @return String
+     */
     @Override
     public String toString() {
         return graph.toString();
     }
 
     /**
-     * Add node and check duplicate labels
-     *
+     * Adds a node and checks for duplicate labels
      * @param label: name of node
      */
     public void addNode(String label) {
@@ -97,8 +102,7 @@ public class DOTGraph {
     }
 
     /**
-     * Add a list of nodes
-     *
+     * Add a list of nodes to the graph
      * @param label: array of nodes
      */
     public void addNodes(String[] label) {
@@ -128,14 +132,12 @@ public class DOTGraph {
 
     /**
      * Add edges to imported graph
-     *
-     * @param srcLabel
-     * @param dstLabel
+     * @param srcLabel the name of the source edge
+     * @param dstLabel the name of the destination edge
      */
     public void addEdge(String srcLabel, String dstLabel) {
         MutableNode srcNode = Factory.mutNode(srcLabel);
         MutableNode dstNode = Factory.mutNode(dstLabel);
-
 
         srcNode.addLink(dstNode);
         graph.add(srcNode);
@@ -143,7 +145,6 @@ public class DOTGraph {
 
     /**
      * Output imported graph into DOT file
-     *
      * @param path: name of the new file
      */
     public void outputDOTGraph(String path) {
@@ -157,7 +158,6 @@ public class DOTGraph {
 
     /**
      * Output imported graph into graphic (PNG)
-     *
      * @param path:   name of the new file
      * @param format: format of the file
      */
@@ -172,10 +172,13 @@ public class DOTGraph {
         }
     }
 
+    /**
+     * Removes a node from the graph
+     * @param label the name of the node
+     */
     public void removeNode(String label) {
         List<MutableNode> nodeList = new ArrayList<>(graph.nodes());
         boolean nodeExists = false;
-
 
         for (int i = 0; i < nodeList.size(); i++) {
             MutableNode node = nodeList.get(i);
@@ -190,13 +193,16 @@ public class DOTGraph {
             throw new NoSuchElementException("Node with label \"" + label + "\" does not exist in the graph.");
         }
 
-
         String graphString = graph.toString();
         graphString = removeNodeRegEx(graphString, label);
 
         graph = rebuild(graphString);
     }
 
+    /**
+     * removes a list of nodes from the graph
+     * @param label a list of names of nodes that the graph needs to remove
+     */
     public void removeNodes(String[] label) {
         String graphString = graph.toString();
 
@@ -206,6 +212,11 @@ public class DOTGraph {
         graph = rebuild(graphString);
     }
 
+    /**
+     * Removes an edge from the graph
+     * @param srcLabel the name of the source edge
+     * @param dstLabel the name of the destination edge
+     */
     public void removeEdge(String srcLabel, String dstLabel) {
         boolean edgeExists = false;
         List<MutableNode> nodes = new ArrayList<>(graph.nodes());
@@ -239,10 +250,10 @@ public class DOTGraph {
     }
 
     /**
-     * Busted out my CSE310 book for this one
-     * @param src
-     * @param dst
-     * @return
+     * Graph search that uses either BFS or DFS. Busted out my CSE310 book for this one
+     * @param src the source node
+     * @param dst the destination node
+     * @return Path
      */
     public Path graphSearch(MutableNode src, MutableNode dst, Algorithm algo) {
 		if (algo == Algorithm.BFS) {
@@ -253,6 +264,13 @@ public class DOTGraph {
     	}
     	return null;
 	}
+
+    /**
+     * A Breadth first search method. Searches the graph
+     * @param src the starting node
+     * @param dst the destination node
+     * @return Path
+     */
     public Path bfsSearch(MutableNode src, MutableNode dst) {
         ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
         ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
@@ -320,6 +338,12 @@ public class DOTGraph {
         return new Path( srcNode, dstNode);
     }
 
+    /**
+     * A depth first search method. Searches the graph
+     * @param src the starting node
+     * @param dst the destination node
+     * @return Path
+     */
     public Path dfsSearch(MutableNode src, MutableNode dst) {
         ArrayList<MutableNode> nodes = new ArrayList<>(graph.nodes());  // make an array of the nodes in graph
         ArrayList<GraphNode> graphNodes = new ArrayList<>();            // make an array of graphNode class
@@ -359,7 +383,13 @@ public class DOTGraph {
         dstNode.setNode(dst);
         return new Path(srcNode, dstNode);
     }
-    private boolean destinationFound = false;
+
+    /**
+     * A helper method for DFS. handles the visits of nodes
+     * @param graphNodes An ArrayList of graph nodes
+     * @param graphNode A single GraphNode
+     * @param dst the destination node
+     */
     private void DFSVisit(ArrayList<GraphNode> graphNodes, GraphNode graphNode,MutableNode dst) {
         if (destinationFound) return;       // need this to stop the search when it finds the node
         time++;                             // not needed but was a variable in CLRS algorithms book
@@ -395,19 +425,27 @@ public class DOTGraph {
         time++;
         graphNode.setTime(time);
     }
-    // For test method
+
+    /**
+     * Method for testing
+     * @return int size of the graph
+     */
     protected int getSize() {
         return graph.nodes().size();
     }
-    // for test method
+
+    /**
+     * Method for testing
+     * @return MutableGraph
+     */
     protected MutableGraph getGraph() {
         return graph;
     }
 
     /**
-     *
-     * @param graphString
-     * @return
+     * Rebuild the graph after edge or node is removed
+     * @param graphString the String representation of the graph
+     * @return MutableGraph
      */
     private MutableGraph rebuild(String graphString) {
 
@@ -424,10 +462,10 @@ public class DOTGraph {
     }
 
     /**
-     *
-     * @param graphString
-     * @param label
-     * @return
+     * Helper method. Regular expressions for formatting the string so the nodes can be removed
+     * @param graphString the String representation of the graph
+     * @param label the name of the node to be removed
+     * @return String
      */
     private String removeNodeRegEx(String graphString, String label) {
 
@@ -455,6 +493,12 @@ public class DOTGraph {
         return graphString;
     }
 
+    /**
+     * Helper method: Regular expressions for formatting the string so the edges can be removed
+     * @param graphString
+     * @param src, dst
+     * @return String
+     */
     private String removeEdgeRegEx(String graphString, String src, String dst) {
 
         String edgeRegex = "(?m)\"" + src + "\"\\s*->\\s*\"" + dst + "\"\\s*;?\\s*";
@@ -465,6 +509,12 @@ public class DOTGraph {
         graphString = graphString.replaceAll(cleanupRegex, "");
         return graphString;
     }
+
+    /**
+     * Gets a node based on name
+     * @param label the name of the label
+     * @return MutableNode
+     */
     public MutableNode getNode(String label) {
         for(MutableNode node : graph.nodes()) {
             if(node.name().toString().equals(label)) {

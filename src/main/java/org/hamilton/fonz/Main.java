@@ -8,6 +8,7 @@ public class Main {
         dotGraph.parseGraph("input.dot");
         System.out.println(dotGraph.toString());
 
+        /**
         String[] nodesToAdd = {"Z", "X", "Y"};
         dotGraph.addNodes(nodesToAdd);
         System.out.println(dotGraph.toString());
@@ -27,7 +28,7 @@ public class Main {
 
         dotGraph.outputGraphics("output","png");
 
-         */
+
 
         System.out.println(dotGraph.toString());
         dotGraph.removeNode("G");
@@ -44,8 +45,9 @@ public class Main {
 
         //dotGraph.removeEdge("a","h");
         //System.out.println(dotGraph.toString());
+         **/
 
-        Path path = dotGraph.graphSearch(dotGraph.getNode("c"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
+        Path path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("h"), DOTGraph.Algorithm.DFS);
         System.out.println("DFS: \n" + path.printPath());
 
 
