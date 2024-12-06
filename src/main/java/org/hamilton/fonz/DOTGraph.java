@@ -250,20 +250,25 @@ public class DOTGraph {
      * @return Path
      */
     public Path graphSearch(MutableNode src, MutableNode dst, Algorithm algo) {
-        BFS bfs = new BFS(graph);
-        DFS dfs = new DFS(graph);
+        GraphSearchTemplate strategy;
 
-        if(src != null && dst != null) {
-            if (algo == Algorithm.BFS) {
-                return bfs.search(src, dst);
-            }
-            else if (algo == Algorithm.DFS) {
-                return dfs.search(src, dst);
+        if (src != null && dst != null) {
+            switch (algo) {
+                case BFS:
+                    strategy = new BFS(graph);
+                    return strategy.search(src, dst);
+
+                case DFS:
+                    strategy = new DFS(graph);
+                    return strategy.search(src, dst);
+
+                default:
+                    throw new IllegalArgumentException("Unsupported algorithm: " + algo);
+
             }
         }
         return new Path(null, null);
-
-	}
+    }
 
     /**
      * Method for testing
