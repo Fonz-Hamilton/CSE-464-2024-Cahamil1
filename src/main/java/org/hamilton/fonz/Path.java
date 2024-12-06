@@ -26,21 +26,27 @@ public class Path {
     private void pathBuilder(GraphNode src, GraphNode dst) {
         //test
         //System.out.println("dstNode: " + dst.getNode().name());
-        if(dst.getNode().equals(src.getNode())) {
+        if(src != null && dst != null) {
+            if(dst.getNode().equals(src.getNode())) {
 
-            pathString = pathString + src.getNode().name();
+                pathString = pathString + src.getNode().name();
 
+            }
+            else if(dst.getPredecessor() == null) {
+                //System.out.println("this is predecessor: " + dst.getPredecessor().getNode().name());
+                System.out.println("No path exists");
+            }
+            else{
+
+                pathBuilder(src, dst.getPredecessor());
+                pathString = pathString + " -> ";
+                pathString = pathString + dst.getNode().name();
+            }
         }
-        else if(dst.getPredecessor() == null) {
-            //System.out.println("this is predecessor: " + dst.getPredecessor().getNode().name());
+        else {
             System.out.println("No path exists");
         }
-        else{
 
-            pathBuilder(src, dst.getPredecessor());
-            pathString = pathString + " -> ";
-            pathString = pathString + dst.getNode().name();
-        }
     }
 
     /**
@@ -49,7 +55,13 @@ public class Path {
      */
     public String printPath() {
         pathString = "";
-        pathBuilder(src, dst);
-        return pathString;
+        if (src != null && dst != null) {
+            pathBuilder(src, dst);
+            return pathString;
+        }
+        else {
+            return "No path exists";
+        }
+
     }
 }

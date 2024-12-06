@@ -250,13 +250,16 @@ public class DOTGraph {
      * @return Path
      */
     public Path graphSearch(MutableNode src, MutableNode dst, Algorithm algo) {
-		if (algo == Algorithm.BFS) {
-        	return bfsSearch(src, dst);
-    	}
-		else if (algo == Algorithm.DFS) {
-        	return dfsSearch(src, dst);
-    	}
-    	return null;
+        if(src != null && dst != null) {
+            if (algo == Algorithm.BFS) {
+                return bfsSearch(src, dst);
+            }
+            else if (algo == Algorithm.DFS) {
+                return dfsSearch(src, dst);
+            }
+        }
+        return new Path(null, null);
+
 	}
 
     /**
