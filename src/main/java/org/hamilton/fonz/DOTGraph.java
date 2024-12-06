@@ -25,7 +25,7 @@ public class DOTGraph {
     private boolean destinationFound = false; // A boolean used for DFSVisit. Scope needs to be outside the method
 
 	public enum Algorithm {
-    BFS, DFS
+    BFS, DFS, RANDOM_WALK
     }
 
     /**
@@ -260,6 +260,10 @@ public class DOTGraph {
 
                 case DFS:
                     strategy = new DFS(graph);
+                    return strategy.search(src, dst);
+
+                case RANDOM_WALK:
+                    strategy = new RandomWalk(graph);
                     return strategy.search(src, dst);
 
                 default:

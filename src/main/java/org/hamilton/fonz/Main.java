@@ -54,6 +54,7 @@ public class Main {
         path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("d"), DOTGraph.Algorithm.BFS);
         System.out.println("BFS: \n" + path.printPath());
 
-
+        path = dotGraph.graphSearch(dotGraph.getNode("a"), dotGraph.getNode("c"), DOTGraph.Algorithm.RANDOM_WALK);
+        System.out.println("Random Walk: \n" + path.printPath());
     }
 }
