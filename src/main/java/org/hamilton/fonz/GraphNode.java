@@ -22,6 +22,8 @@ public class GraphNode {
         this.predecessor = null;
         this.color = 0;
         this.dst = Integer.MAX_VALUE;
+        this.time = 0;
+
     }
 
     /**

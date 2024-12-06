@@ -177,4 +177,28 @@ public class DOTGraphTest {
         Assert.assertFalse(dotGraph.toString().contains("\"" + "A" + "\"" + " -> " + "\""+ "B"+ "\""));
     }
 
+    @Test
+    public void testBfs() {
+        dotGraph.parseGraph("testGraph.dot");
+        dotGraph.addNode("C");
+        dotGraph.addNode("D");
+        dotGraph.addEdge("B", "C");
+        dotGraph.addEdge("A", "D");
+
+        Path path = dotGraph.graphSearch(dotGraph.getNode("A"), dotGraph.getNode("C"), DOTGraph.Algorithm.BFS);
+        Assert.assertEquals(path.printPath(), "A -> B -> C");
+    }
+
+    @Test
+    public void testDfs() {
+        dotGraph.parseGraph("testGraph.dot");
+        dotGraph.addNode("C");
+        dotGraph.addNode("D");
+        dotGraph.addEdge("B", "C");
+        dotGraph.addEdge("A", "D");
+
+        Path path = dotGraph.graphSearch(dotGraph.getNode("A"), dotGraph.getNode("C"), DOTGraph.Algorithm.DFS);
+        Assert.assertEquals(path.printPath(), "A -> B -> C");
+    }
+
 }
